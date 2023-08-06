@@ -2,7 +2,6 @@
 #include <tiny_gltf.h>
 #include <memory>
 #include <mathfu/glsl_mappings.h>
-
 namespace tinygltf
 {
 	class Model;
@@ -15,6 +14,7 @@ namespace Redline
 	class Material;
 	class TriangleMesh;
 	class SceneObject;
+	class CudaMesh;
 
 	class GLTFSceneLoader
 	{
@@ -24,7 +24,7 @@ namespace Redline
 
 		std::vector<std::shared_ptr<Bitmap2D>> Images;
 		std::vector<std::shared_ptr<Material>> Materials;
-		std::vector<std::shared_ptr<TriangleMesh>> Meshes;
+		std::vector<std::shared_ptr<CudaMesh>> Meshes;
 
 		static void LoadImages(tinygltf::Model& gltfFile, std::vector<std::shared_ptr<Bitmap2D>>& imagesOut);
 
@@ -33,7 +33,7 @@ namespace Redline
 			std::vector<std::shared_ptr<Material>>& materialsOut);
 
 		static void LoadMeshes(tinygltf::Model& gltfFile,
-			std::vector<std::shared_ptr<TriangleMesh>>& meshesOut);
+			std::vector<std::shared_ptr<CudaMesh>>& meshesOut);
 
 		void FillScene(tinygltf::Model& gltfFile, std::shared_ptr<Scene>& scene);
 

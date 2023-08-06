@@ -2,10 +2,13 @@
 #include "tiny_gltf.h"
 #include "../GraphicalResources/Material.h"
 #include "../GraphicalResources/TriangleMesh.h"
+#include "../GraphicalResources/Cuda/CudaMesh.h"
+
 #include "../Scene/SceneObject.h"
 #include "../Scene/Scene.h"
 
 //#include "../Scene/Components/Renderable/MeshRenderer.h"
+#include <Scene/Components/Renderable/CudaMeshRenderer.h>
 #include "Scene/Components/CameraComponent.h"
 //#include "Scene/Components/Lights/PointLightComponent.h"
 //#include "Scene/Components/Lights/SpotLightComponent.h"
@@ -146,11 +149,11 @@ void GLTFSceneLoader::LoadMaterials(
 	}
 }
 
-void GLTFSceneLoader::LoadMeshes(tinygltf::Model& gltfFile, vector<shared_ptr<TriangleMesh>>& meshesOut)
+void GLTFSceneLoader::LoadMeshes(tinygltf::Model& gltfFile, vector<shared_ptr<CudaMesh>>& meshesOut)
 {	
 	for(auto& mesh : gltfFile.meshes)
 	{
-		auto newMesh = std::make_shared<TriangleMesh>(mesh.name, mesh, gltfFile);
+		auto newMesh = std::make_shared<CudaMesh>(mesh.name, mesh, gltfFile);
 		meshesOut.push_back(newMesh);
 	}
 }
@@ -214,24 +217,21 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 	//Load meshes
 	if(gltfNode.mesh >= 0)
 	{
-		throw exception();
 		//Append mesh
-		//auto meshRenderer = sceneObject->AddComponent<MeshRenderer>();
-		//meshRenderer->Mesh = Meshes[gltfNode.mesh];//TODO:Handle default matieral
+		auto meshRenderer = sceneObject->AddComponent<CudaMeshRenderer>();
+		meshRenderer->Mesh = Meshes[gltfNode.mesh];//TODO:Handle default matieral
 
-
-		//for(auto& primitive : gltfFile.meshes[gltfNode.mesh].primitives)
-		//{
-		//	if(primitive.material >=0)
-		//	{
-		//		meshRenderer->SurfaceMaterials.push_back(Materials[primitive.material]);
-		//	}
-		//	else
-		//	{
-		//		meshRenderer->SurfaceMaterials.push_back(Materials[0]);//TODO:Default materials
-		//	}
-		//}
-
+		for(auto& primitive : gltfFile.meshes[gltfNode.mesh].primitives)
+		{
+			if(primitive.material >=0)
+			{
+				meshRenderer->SurfaceMaterials.push_back(Materials[primitive.material]);
+			}
+			else
+			{
+				meshRenderer->SurfaceMaterials.push_back(Materials[0]);//TODO:Default materials
+			}
+		}
 	}
 
 	//Load camera
@@ -243,6 +243,13 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 		cameraComponent->AspectRatio = camera.perspective.aspectRatio;
 		cameraComponent->YAxisFieldofViewRadians = camera.perspective.yfov;
 	}
+	else if (gltfNode.name == "Main Camera")
+	{
+		auto cameraComponent = sceneObject->AddComponent<CameraComponent>();
+		cameraComponent->AspectRatio = 16.0f / 9.0f;
+		cameraComponent->YAxisFieldofViewRadians = 70.0f;
+	}
+
 
 	//Load Lights
 	//TODO:Hack in addition export values in the blender exporter

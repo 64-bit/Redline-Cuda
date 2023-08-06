@@ -89,6 +89,7 @@
     <ClInclude Include="GraphicalResources\Bitmap2DFloat.h" />
     <ClInclude Include="GraphicalResources\Color.h" />
     <ClInclude Include="GraphicalResources\CubemapTexture.h" />
+    <ClInclude Include="GraphicalResources\Cuda\CudaMesh.h" />
     <ClInclude Include="GraphicalResources\Material.h" />
     <ClInclude Include="GraphicalResources\MaterialEnums.h" />
     <ClInclude Include="GraphicalResources\MeshTriangle.h" />
@@ -106,11 +107,13 @@
     <ClInclude Include="Math\Sphere.h" />
     <ClInclude Include="Renderer\FrameOutputSettings.h" />
     <ClInclude Include="Scene\Components\CameraComponent.h" />
+    <ClInclude Include="Scene\Components\Renderable\CudaMeshRenderer.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneForwardDeclarations.h" />
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Scene\SceneObjectComponent.h" />
     <ClInclude Include="Scene\Transform.h" />
+    <ClInclude Include="Utilities\CudaUtils.h" />
     <ClInclude Include="Utilities\Multithreading\AutoResetThreadGate.h" />
     <ClInclude Include="Utilities\Multithreading\BasicThreadpoolJob.h" />
     <ClInclude Include="Utilities\Multithreading\IThreadpoolJob.h" />
@@ -129,6 +132,7 @@
     <ClCompile Include="GraphicalResources\Bitmap2D.cpp" />
     <ClCompile Include="GraphicalResources\Bitmap2DFloat.cpp" />
     <ClCompile Include="GraphicalResources\CubemapTexture.cpp" />
+    <ClCompile Include="GraphicalResources\Cuda\CudaMesh.cpp" />
     <ClCompile Include="GraphicalResources\Loaders\LodePngCompilationUnit.cpp" />
     <ClCompile Include="GraphicalResources\Material.cpp" />
     <ClCompile Include="GraphicalResources\MeshTriangle.cpp" />
@@ -141,10 +145,12 @@
     <ClCompile Include="Math\Sampling.cpp" />
     <ClCompile Include="Math\Sphere.cpp" />
     <ClCompile Include="Scene\Components\CameraComponent.cpp" />
+    <ClCompile Include="Scene\Components\Renderable\CudaMeshRenderer.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />
     <ClCompile Include="Scene\SceneObjectComponent.cpp" />
     <ClCompile Include="Scene\Transform.cpp" />
+    <ClCompile Include="Utilities\CudaUtils.cpp" />
     <ClCompile Include="Utilities\Multithreading\AutoResetThreadGate.cpp" />
     <ClCompile Include="Utilities\Multithreading\ThreadGate.cpp" />
     <ClCompile Include="Utilities\Multithreading\ThreadLocalRandom.cpp" />

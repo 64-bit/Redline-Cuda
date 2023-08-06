@@ -2,6 +2,7 @@
 #include "CLIErrorCodes.h"
 #include "CommandLineArguments.h"
 #include "CameraFlightController.h"
+#include <Utilities/CudaUtils.h>
 //#include "Renderer/BRDF/CookTorrence/Functions/GGX_Distribution.h"
 //#include "Renderer/BRDF/CookTorrence/Functions/GGX_Geometry.h"
 //#include "Renderer/BRDF/CookTorrence/Functions/Schlick_Fresnel.h"
@@ -11,6 +12,8 @@ using namespace Redline;
 int RenderApplication::Run(const CommandLineArguments* const arguments)
 {
 	//_threadpool = new Threadpool(arguments->Threads, Normal);
+
+	CudaUtils::InitCuda();
 
 	const auto loadSceneResult = LoadScene(arguments);
 	if(loadSceneResult != CLI_ERRORCODE___OK)
@@ -74,8 +77,6 @@ using namespace mathfu;
 
 void RenderApplication::RunWholeApplication(const CommandLineArguments* const arguments)
 {
-	//Start SDL
-
 	//Main loop flag
 	bool quit = false;
 
@@ -170,6 +171,9 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 			SDL_Delay(delay);
 		}
 	}
+
+	//Quit CUDA
+	CudaUtils::ShutdownCuda();
 
 	//Quit SDL
 	SDL_Quit();
