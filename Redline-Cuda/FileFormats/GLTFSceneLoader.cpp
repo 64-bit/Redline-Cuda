@@ -6,7 +6,7 @@
 #include "../Scene/Scene.h"
 
 //#include "../Scene/Components/Renderable/MeshRenderer.h"
-//#include "Scene/Components/CameraComponent.h"
+#include "Scene/Components/CameraComponent.h"
 //#include "Scene/Components/Lights/PointLightComponent.h"
 //#include "Scene/Components/Lights/SpotLightComponent.h"
 //#include "Scene/Components/Lights/DirectionalLightComponent.h"
@@ -237,13 +237,11 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 	//Load camera
 	if(gltfNode.camera >= 0)
 	{
-		throw exception();
+		auto& camera = gltfFile.cameras[gltfNode.camera];
 
-		//auto& camera = gltfFile.cameras[gltfNode.camera];
-
-		//auto cameraComponent = sceneObject->AddComponent<CameraComponent>();
-		//cameraComponent->AspectRatio = camera.perspective.aspectRatio;
-		//cameraComponent->YAxisFieldofViewRadians = camera.perspective.yfov;
+		auto cameraComponent = sceneObject->AddComponent<CameraComponent>();
+		cameraComponent->AspectRatio = camera.perspective.aspectRatio;
+		cameraComponent->YAxisFieldofViewRadians = camera.perspective.yfov;
 	}
 
 	//Load Lights
