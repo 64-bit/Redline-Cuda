@@ -47,7 +47,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);MATHFU_COMPILE_WITHOUT_SIMD_SUPPORT</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)Libs\SingleFileLibs;$(SolutionDir)Libs\sdl2\include;$(SolutionDir)Libs\mathfu\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -64,7 +65,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);MATHFU_COMPILE_WITHOUT_SIMD_SUPPORT</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)Libs\SingleFileLibs;$(SolutionDir)Libs\sdl2\include;$(SolutionDir)Libs\mathfu\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -79,6 +81,76 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FileFormats\GLTFSceneLoader.h" />
+    <ClInclude Include="FileFormats\GLTFUtilities.h" />
+    <ClInclude Include="GraphicalResources\Bitmap2D.h" />
+    <ClInclude Include="GraphicalResources\Bitmap2DFloat.h" />
+    <ClInclude Include="GraphicalResources\Color.h" />
+    <ClInclude Include="GraphicalResources\CubemapTexture.h" />
+    <ClInclude Include="GraphicalResources\Material.h" />
+    <ClInclude Include="GraphicalResources\MaterialEnums.h" />
+    <ClInclude Include="GraphicalResources\MeshTriangle.h" />
+    <ClInclude Include="GraphicalResources\MeshVertex.h" />
+    <ClInclude Include="GraphicalResources\TriangleMesh.h" />
+    <ClInclude Include="Math\BoundingBox.h" />
+    <ClInclude Include="Math\BVH\BVH.h" />
+    <ClInclude Include="Math\Directions.h" />
+    <ClInclude Include="Math\ImageRectangle.h" />
+    <ClInclude Include="Math\KDTree\KDTree.h" />
+    <ClInclude Include="Math\KDTree\KDTreeNode.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Ray.h" />
+    <ClInclude Include="Math\Sampling.h" />
+    <ClInclude Include="Math\Sphere.h" />
+    <ClInclude Include="Renderer\FrameOutputSettings.h" />
+    <ClInclude Include="Scene\Components\CameraComponent.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneForwardDeclarations.h" />
+    <ClInclude Include="Scene\SceneObject.h" />
+    <ClInclude Include="Scene\SceneObjectComponent.h" />
+    <ClInclude Include="Scene\Transform.h" />
+    <ClInclude Include="Utilities\Multithreading\AutoResetThreadGate.h" />
+    <ClInclude Include="Utilities\Multithreading\BasicThreadpoolJob.h" />
+    <ClInclude Include="Utilities\Multithreading\IThreadpoolJob.h" />
+    <ClInclude Include="Utilities\Multithreading\Promis.h" />
+    <ClInclude Include="Utilities\Multithreading\ThreadGate.h" />
+    <ClInclude Include="Utilities\Multithreading\ThreadLocalRandom.h" />
+    <ClInclude Include="Utilities\Multithreading\Threadpool.h" />
+    <ClInclude Include="Utilities\Multithreading\ThreadpoolThread.h" />
+    <ClInclude Include="Utilities\Stopwatch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FileFormats\GLTFSceneLoader.cpp" />
+    <ClCompile Include="FileFormats\GLTFUtilities.cpp" />
+    <ClCompile Include="FileFormats\StbImageCompilation.cpp" />
+    <ClCompile Include="FileFormats\TinyGltfCompilation.cpp" />
+    <ClCompile Include="GraphicalResources\Bitmap2D.cpp" />
+    <ClCompile Include="GraphicalResources\Bitmap2DFloat.cpp" />
+    <ClCompile Include="GraphicalResources\CubemapTexture.cpp" />
+    <ClCompile Include="GraphicalResources\Loaders\LodePngCompilationUnit.cpp" />
+    <ClCompile Include="GraphicalResources\Material.cpp" />
+    <ClCompile Include="GraphicalResources\MeshTriangle.cpp" />
+    <ClCompile Include="GraphicalResources\TriangleMesh.cpp" />
+    <ClCompile Include="Math\BoundingBox.cpp" />
+    <ClCompile Include="Math\BVH\BVH.cpp" />
+    <ClCompile Include="Math\Directions.cpp" />
+    <ClCompile Include="Math\KDTree\KDTreeNode.cpp" />
+    <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\Sampling.cpp" />
+    <ClCompile Include="Math\Sphere.cpp" />
+    <ClCompile Include="Scene\Components\CameraComponent.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneObject.cpp" />
+    <ClCompile Include="Scene\SceneObjectComponent.cpp" />
+    <ClCompile Include="Scene\Transform.cpp" />
+    <ClCompile Include="Utilities\Multithreading\AutoResetThreadGate.cpp" />
+    <ClCompile Include="Utilities\Multithreading\ThreadGate.cpp" />
+    <ClCompile Include="Utilities\Multithreading\ThreadLocalRandom.cpp" />
+    <ClCompile Include="Utilities\Multithreading\Threadpool.cpp" />
+    <ClCompile Include="Utilities\Multithreading\ThreadpoolThread.cpp" />
+    <ClCompile Include="Utilities\Stopwatch.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
