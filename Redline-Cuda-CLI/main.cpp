@@ -21,6 +21,8 @@ int main(int argc, char** argv)
 
 	const int argsErrorCode = CommandLineArguments::ParseCommandLineArguments(argc, argv, commandLineArguments);
 
+	commandLineArguments->SceneFilename = "TestData/Root.gltf";
+
 	if (argsErrorCode != CLI_ERRORCODE___OK)
 	{
 		if (argsErrorCode == CLI_ERRORCODE___HELP_PRINTED)
