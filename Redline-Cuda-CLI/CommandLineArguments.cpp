@@ -16,8 +16,8 @@ const int SCALE_FACTOR = 1;
 const int SAMPLE_COUNT_FOR_BUILD = 1;
 #endif
 
-const int SCREEN_WIDTH = (1920 / 4) * SCALE_FACTOR;
-const int SCREEN_HEIGHT = (1080 / 4) * SCALE_FACTOR;
+const int SCREEN_WIDTH = (1920 / 1) * SCALE_FACTOR;
+const int SCREEN_HEIGHT = (1080 / 1) * SCALE_FACTOR;
 
 static bool CheckedToInt(char* string, int& intValOut)
 {

@@ -23,6 +23,57 @@ struct PackedCameraData
 	float fovY;
 };
 
+
+__device__ __host__ bool RayTriangleIntersection(const Ray& localRay, const vec3& vertA, const vec3& vertB,
+	const vec3& vertC, float& outHitDistance)
+{
+	const float EPSILON = 0.0000001f;
+
+	vec3 edge1 = vertB - vertA;
+	vec3 edge2 = vertC - vertA;
+
+	vec3 h = cross(localRay.Direction, edge2);
+	float a = dot(edge1, h);
+
+
+	if (a > -EPSILON && a < EPSILON)
+	{
+		return false;
+	}
+
+	/*if (a < EPSILON) Replace the above with this for backface culling
+	{
+		return false;
+	}*/
+
+	float f = 1.0f / a;
+	vec3 s = localRay.Origin - vertA;
+	float u = f * dot(s, h);
+	if (u < 0.0 || u > 1.0)
+	{
+		return false;
+	}
+
+	vec3 q = cross(s, edge1);
+	float v = f * dot(localRay.Direction, q);
+	if (v < 0.0 || u + v > 1.0)
+	{
+		return false;
+	}
+
+	float t = f * dot(edge2, q);
+
+	if (t > EPSILON) // ray intersection
+	{
+		outHitDistance = t;
+		return true;
+	}
+	else // This means that there is a line intersection but not a ray intersection.
+	{
+		return false;
+	}
+}
+
 __global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, PackedCameraData camera)
 {
 	uint2 i;
@@ -55,6 +106,8 @@ __global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, Pac
 	color.G = 0;
 	color.B = 0;
 
+	float bestHitDistance;
+
 	for (int meshIndex = 0; meshIndex < scene.MeshCount; meshIndex++)
 	{
 		CudaMeshData mesh = scene.Meshes[meshIndex];
@@ -67,18 +120,36 @@ __global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, Pac
 		float entry, exit;
 		if (mesh.Bounds.DoesRayIntersect(localRay, entry, exit))
 		{
-			if (meshIndex == 0)
+
+			for (int tri = 0; tri < mesh.TriangleCount; tri++)
 			{
-				color.R = 255;
+				uint4 triangle = ((uint4*)mesh.Triangles)[tri];
+
+				vec3 vertA = ((vec3*)mesh.Verticies)[triangle.x];
+				vec3 vertB = ((vec3*)mesh.Verticies)[triangle.y];
+				vec3 vertC = ((vec3*)mesh.Verticies)[triangle.z];
+
+				float thisHitDistance;
+				bool didHit = RayTriangleIntersection(localRay, vertA, vertB, vertC, thisHitDistance);
+				if (didHit) 
+				{
+					if (meshIndex == 0)
+					{
+						color.R = 255;
+					}
+					if (meshIndex == 1)
+					{
+						color.G = 255;
+					}
+					if (meshIndex == 2)
+					{
+						color.B = 255;
+					}
+					break;
+				}
 			}
-			if (meshIndex == 1)
-			{
-				color.G = 255;
-			}
-			if (meshIndex == 2)
-			{
-				color.B = 255;
-			}
+
+
 		}
 	}
 

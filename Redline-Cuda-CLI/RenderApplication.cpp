@@ -168,9 +168,9 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 		//}
 
 		//Wiat a minimum of 5 miliseconds between iterations of this loop
-		if (ticksPassed < 10)
+		if (ticksPassed < 5)
 		{
-			int delay = 10 - ticksPassed;
+			int delay = 5 - ticksPassed;
 			SDL_Delay(delay);
 		}
 	}
