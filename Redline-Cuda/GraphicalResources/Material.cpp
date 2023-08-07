@@ -1,7 +1,7 @@
 #include "Material.h"
 
 using namespace Redline;
-using namespace mathfu;
+using namespace glm;
 
 
 Material::Material()

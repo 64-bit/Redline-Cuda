@@ -1,21 +1,22 @@
-#include <mathfu/glsl_mappings.h>
+#include <glm.h>
 #include "SceneObject.h"
 #include "Transform.h"
 #include "Scene.h"
 
+
 using namespace Redline;
-using namespace mathfu;
+using namespace glm;
 
 Transform::Transform(SceneObject& owningObject)
 	: SceneObjectComponent(owningObject)
 {
 	_localPosition = vec3(0.0f, 0.0f, 0.0f);
-	_localRotation = quat::identity;
+	_localRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 	_localScale = vec3(1.0f, 1.0f, 1.0f);
 	Parent = nullptr;
 }
 
-mathfu::mat4 Transform::GetWorldTransformMatrix() const
+mat4 Transform::GetWorldTransformMatrix() const
 {
 	//If we have no parent, return local transform as world matrix transform
 	if(Parent == nullptr)
@@ -27,10 +28,21 @@ mathfu::mat4 Transform::GetWorldTransformMatrix() const
 	return Parent->GetWorldTransformMatrix() * GetLocalTransformMatrix();
 }
 
-mathfu::mat4 Transform::GetLocalTransformMatrix() const
+mat4 Transform::GetLocalTransformMatrix() const
 {
-	auto rotationMatrix = _localRotation.ToMatrix();
-	return mat4::Transform(_localPosition, rotationMatrix, _localScale);
+	//auto rotationMatrix = _localRotation.ToMatrix();
+
+	mat4 transform = mat4(1.0f);
+
+	transform = glm::translate(transform, _localPosition);
+
+	auto rotationMatrix = glm::toMat4(_localRotation);
+	transform = transform * rotationMatrix;
+
+	transform = glm::scale(transform, _localScale);
+
+	return transform;
+	//return mat4::Transform(_localPosition, rotationMatrix, _localScale);
 }
 
 void Transform::SetParent(Transform* newParent)
@@ -88,12 +100,12 @@ const std::vector<Transform*>& Transform::GetChildren() const
 	return Children;
 }
 
-mathfu::vec3 Transform::GetLocalPosition() const
+vec3 Transform::GetLocalPosition() const
 {
 	return _localPosition;
 }
 
-mathfu::vec3 Transform::GetPosition() const
+vec3 Transform::GetPosition() const
 {
 	if(Parent == nullptr)
 	{
@@ -122,32 +134,34 @@ void Transform::SetPosition(const vec3& position)
 	const auto parentPosition = Parent->GetPosition();
 	const auto parentRotation = Parent->GetRotation();
 
-	_localPosition = parentRotation.Inverse() * (position - parentPosition);
+	_localPosition = inverse(parentRotation) * (position - parentPosition);
 }
 
-mathfu::quat Transform::GetLocalRotation() const
+quat Transform::GetLocalRotation() const
 {
 	return _localRotation;
 }
 
-mathfu::quat Transform::GetRotation() const
+quat Transform::GetRotation() const
 {
 	if(Parent == nullptr)
 	{
 		return _localRotation;
 	}
-	return quat::FromMatrix(GetWorldTransformMatrix());
+
+	return glm::toQuat(GetWorldTransformMatrix());	
+	//return quat::FromMatrix(GetWorldTransformMatrix());
 }
 
-void Transform::SetLocalRotation(const mathfu::quat& rotation)
+void Transform::SetLocalRotation(const quat& rotation)
 {
 	_localRotation = rotation;
-	_localRotation.Normalize();
+	_localRotation = normalize(_localRotation);
 }
 
-void Transform::SetRotation(const mathfu::quat& rotation)
+void Transform::SetRotation(const quat& rotation)
 {
-	if(Parent == nullptr)
+	if (Parent == nullptr)
 	{
 		_localRotation = rotation;
 		return;
@@ -156,27 +170,27 @@ void Transform::SetRotation(const mathfu::quat& rotation)
 	auto parentRotation = Parent->GetRotation();
 
 	//compute rotation from parent to new destination rotation
-	_localRotation = parentRotation.Inverse() * rotation;
-	_localRotation.Normalize();
+	_localRotation = inverse(parentRotation) * rotation;
+	_localRotation = normalize(_localRotation);
 }
 
-mathfu::vec3 Transform::GetLocalScale() const
+vec3 Transform::GetLocalScale() const
 {
 	return _localScale;
 }
 
-mathfu::vec3 Transform::GetScale() const
+vec3 Transform::GetScale() const
 {
 	//TODO: Need to decompose entire transform
 	return _localScale;
 }
 
-void Transform::SetLocalScale(const mathfu::vec3& scale)
+void Transform::SetLocalScale(const vec3& scale)
 {
 	_localScale = scale;
 }
 
-void Transform::SetScale(const mathfu::vec3& scale)
+void Transform::SetScale(const vec3& scale)
 {
 	//TODO: Need to decomponse entire transform
 }

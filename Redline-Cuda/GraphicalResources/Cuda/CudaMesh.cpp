@@ -25,6 +25,8 @@ Redline::CudaMesh::CudaMesh(const std::string& name, tinygltf::Mesh& mesh, tinyg
 	}
 
 	ComputeTangents();
+	ComputeBounds();
+
 	_cudaMeshData = CudaMeshData(*this);
 	printf("Loaded mesh %s with %zu vertices and %u triangles\n", Name.c_str(), Vertices.size(), GetTriangleCount());
 }
@@ -108,6 +110,15 @@ void Redline::CudaMesh::ComputeTangents()
 	}
 }
 
+void Redline::CudaMesh::ComputeBounds()
+{
+	Bounds = BoundingBox();
+	for (vec3& vert : Vertices) 
+	{
+		Bounds.EnlargeByPoint(vert);
+	}
+}
+
 void Redline::CudaMesh::AppendGLTFPrimitive(tinygltf::Primitive& primitive, tinygltf::Model& gltfFile, int primitiveID)
 {
 	unsigned int vertexStartPosition = Vertices.size();
@@ -181,6 +192,8 @@ Redline::CudaMeshData::CudaMeshData(CudaMesh& source)
 	Normals = CudaUtils::UploadVector(source.Normals);
 	BiTangents = CudaUtils::UploadVector(source.BiTangents);
 	Tangents = CudaUtils::UploadVector(source.Tangents);
+
+	Bounds = source.Bounds;
 }
 
 void Redline::CudaMeshData::Dispose()

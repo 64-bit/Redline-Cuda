@@ -18,7 +18,7 @@ namespace Redline
 		std::shared_ptr<CameraComponent> _camera;
 		int _lastMouseX;
 		int _lastMouseY;
-		mathfu::vec3 _cameraPitchYawRoll;
+		glm::vec3 _cameraPitchYawRoll;
 
 		float _timeSinceLastRenderUpdate;
 		bool _hasMovedSinceLastUpdate;

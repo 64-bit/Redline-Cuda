@@ -4,6 +4,7 @@
 #include <vector>
 #include "cuda_runtime.h"
 #include "mathfu/glsl_mappings.h"
+#include <Math/BoundingBox.h>
 
 namespace objl
 {
@@ -27,6 +28,8 @@ namespace Redline
 	public:
 		unsigned int TriangleCount;
 		unsigned int VertexCount;
+
+		BoundingBox Bounds;
 
 		void* Verticies;
 		void* Triangles;
@@ -63,6 +66,8 @@ namespace Redline
 
 		CudaMeshData _cudaMeshData;
 
+		BoundingBox Bounds;
+
 
 		unsigned int GetTriangleCount() const;
 
@@ -71,6 +76,8 @@ namespace Redline
 
 	private:
 		void ComputeTangents();
+
+		void ComputeBounds();
 
 		void ComputeTangentBitangent(uint4 triangle, mathfu::vec3& tangent, mathfu::vec3& biTangent);
 

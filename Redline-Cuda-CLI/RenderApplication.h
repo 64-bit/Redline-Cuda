@@ -1,6 +1,7 @@
 #pragma once
 #include "Utilities/Multithreading/Threadpool.h"
 //#include "Renderer/FrameRenderer.h"
+#include <Renderer/CudaJank/CudaJankFrameRenderer.h>
 #include "RenderPreviewWindow.h"
 //#include "Renderer/PathTracer.h"
 #include <memory>
@@ -47,7 +48,7 @@ namespace Redline
 		//std::shared_ptr<BRDF> _brdf;
 		//std::shared_ptr<PathTracer> _pathTracer;
 
-		//std::shared_ptr<FrameRenderer> _frameRenderer;
+		std::shared_ptr<CudaJankFrameRenderer> _frameRenderer;
 		//RenderFrameAsyncPromis _frameResultPromis;
 
 		std::shared_ptr<Scene> _scene;

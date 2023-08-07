@@ -13,9 +13,10 @@
 //#include "Scene/Components/Lights/PointLightComponent.h"
 //#include "Scene/Components/Lights/SpotLightComponent.h"
 //#include "Scene/Components/Lights/DirectionalLightComponent.h"
+#include <glm.h>
 
 using namespace std;
-using namespace mathfu;
+using namespace glm;
 using namespace Redline;
 
 const float ROUGHNESS_MIN_VALUE = 0.03f;
@@ -203,13 +204,23 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 	if (gltfNode.matrix.size() == 16)
 	{
 		mat4 tx;
+		float* pSource = (float*)glm::value_ptr(tx);
+
 		for(int i = 0; i < 16;i++)
 		{
-			tx[i] = static_cast<float>(gltfNode.matrix[i]);
+			pSource[i] = static_cast<float>(gltfNode.matrix[i]);
 		}
 
-		vec3 translation = tx.TranslationVector3D();
-		quat rotation = quat::FromMatrix(tx.ToRotationMatrix(tx));
+		vec3 translation;
+		quat rotation;
+		vec3 scale;
+
+		DecomposeMatrix_GLM(tx, translation, rotation, scale);
+
+		//vec3 translation = tx.TranslationVector3D();
+		//quat rotation = quat::FromMatrix(tx.ToRotationMatrix(tx));
+		//quat rotation = quat::FromMatrix(tx.ToRotationMatrix(tx));
+
 		sceneObject->Transform.SetLocalPosition(translation);
 		sceneObject->Transform.SetLocalRotation(rotation);
 	}
@@ -247,7 +258,7 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 	{
 		auto cameraComponent = sceneObject->AddComponent<CameraComponent>();
 		cameraComponent->AspectRatio = 16.0f / 9.0f;
-		cameraComponent->YAxisFieldofViewRadians = 70.0f;
+		cameraComponent->YAxisFieldofViewRadians = 1.0f;
 	}
 
 

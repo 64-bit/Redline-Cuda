@@ -1,5 +1,5 @@
 #pragma once
-
+#include<memory>
 #include <SDL.h>
 #undef main
 
@@ -16,7 +16,7 @@ namespace Redline
 
 		int CreateWindow(const CommandLineArguments* const arguments);
 
-		//void UpdateWindowFromBitmap(std::shared_ptr<Bitmap2D> bitmapToDisplay);
+		void UpdateWindowFromBitmap(std::shared_ptr<Bitmap2D> bitmapToDisplay);
 
 		bool ShouldQuitThisFrame();
 

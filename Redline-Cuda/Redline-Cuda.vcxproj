@@ -23,7 +23,7 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);MATHFU_COMPILE_WITHOUT_SIMD_SUPPORT</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)Libs\SingleFileLibs;$(SolutionDir)Libs\sdl2\include;$(SolutionDir)Libs\mathfu\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)Libs\SingleFileLibs;$(SolutionDir)Libs\glm;$(SolutionDir)Libs\sdl2\include;$(SolutionDir)Libs\mathfu\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -66,7 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);MATHFU_COMPILE_WITHOUT_SIMD_SUPPORT</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)Libs\SingleFileLibs;$(SolutionDir)Libs\sdl2\include;$(SolutionDir)Libs\mathfu\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)Libs\SingleFileLibs;$(SolutionDir)Libs\glm;$(SolutionDir)Libs\sdl2\include;$(SolutionDir)Libs\mathfu\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -85,10 +85,12 @@
   <ItemGroup>
     <ClInclude Include="FileFormats\GLTFSceneLoader.h" />
     <ClInclude Include="FileFormats\GLTFUtilities.h" />
+    <ClInclude Include="glm.h" />
     <ClInclude Include="GraphicalResources\Bitmap2D.h" />
     <ClInclude Include="GraphicalResources\Bitmap2DFloat.h" />
     <ClInclude Include="GraphicalResources\Color.h" />
     <ClInclude Include="GraphicalResources\CubemapTexture.h" />
+    <ClInclude Include="GraphicalResources\Cuda\CudaBitmap2D.h" />
     <ClInclude Include="GraphicalResources\Cuda\CudaMesh.h" />
     <ClInclude Include="GraphicalResources\Material.h" />
     <ClInclude Include="GraphicalResources\MaterialEnums.h" />
@@ -97,6 +99,8 @@
     <ClInclude Include="GraphicalResources\TriangleMesh.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Math\BVH\BVH.h" />
+    <ClInclude Include="Math\cudaMat4.h" />
+    <ClInclude Include="Math\cuda_helper_math.h" />
     <ClInclude Include="Math\Directions.h" />
     <ClInclude Include="Math\ImageRectangle.h" />
     <ClInclude Include="Math\KDTree\KDTree.h" />
@@ -105,6 +109,7 @@
     <ClInclude Include="Math\Ray.h" />
     <ClInclude Include="Math\Sampling.h" />
     <ClInclude Include="Math\Sphere.h" />
+    <ClInclude Include="Renderer\CudaJank\CudaJankFrameRenderer.h" />
     <ClInclude Include="Renderer\FrameOutputSettings.h" />
     <ClInclude Include="Scene\Components\CameraComponent.h" />
     <ClInclude Include="Scene\Components\Renderable\CudaMeshRenderer.h" />
@@ -132,18 +137,26 @@
     <ClCompile Include="GraphicalResources\Bitmap2D.cpp" />
     <ClCompile Include="GraphicalResources\Bitmap2DFloat.cpp" />
     <ClCompile Include="GraphicalResources\CubemapTexture.cpp" />
+    <CudaCompile Include="GraphicalResources\Cuda\CudaBitmap2D.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
     <ClCompile Include="GraphicalResources\Cuda\CudaMesh.cpp" />
     <ClCompile Include="GraphicalResources\Loaders\LodePngCompilationUnit.cpp" />
     <ClCompile Include="GraphicalResources\Material.cpp" />
     <ClCompile Include="GraphicalResources\MeshTriangle.cpp" />
     <ClCompile Include="GraphicalResources\TriangleMesh.cpp" />
-    <ClCompile Include="Math\BoundingBox.cpp" />
+    <CudaCompile Include="Math\BoundingBox.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
     <ClCompile Include="Math\BVH\BVH.cpp" />
     <ClCompile Include="Math\Directions.cpp" />
     <ClCompile Include="Math\KDTree\KDTreeNode.cpp" />
     <ClCompile Include="Math\Math.cpp" />
     <ClCompile Include="Math\Sampling.cpp" />
     <ClCompile Include="Math\Sphere.cpp" />
+    <CudaCompile Include="Renderer\CudaJank\CudaJankFrameRenderer.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
     <ClCompile Include="Scene\Components\CameraComponent.cpp" />
     <ClCompile Include="Scene\Components\Renderable\CudaMeshRenderer.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />

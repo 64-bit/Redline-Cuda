@@ -43,7 +43,8 @@ void RenderApplication::RestartRender()
 	//	_frameResultPromis->Getvalue();
 	//}
 
-	//_frameRenderer->ResetRenderer();
+	_frameRenderer->ResetRenderer();
+	_frameRenderer->RenderFrame();
 	//_frameResultPromis = _frameRenderer->RenderFrameAsync(_currentRenderMipLevel);
 }
 
@@ -87,6 +88,7 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 
 	Stopwatch watch;
 	RestartRender();
+	_previewWindow->UpdateWindowFromBitmap(_frameRenderer->GetCurrentFrameState());
 
 	while (!quit)
 	{
@@ -110,6 +112,7 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 			{
 				watch = Stopwatch();
 				RestartRender();
+				_previewWindow->UpdateWindowFromBitmap(_frameRenderer->GetCurrentFrameState());
 			}
 		}
 
@@ -165,9 +168,9 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 		//}
 
 		//Wiat a minimum of 5 miliseconds between iterations of this loop
-		if (ticksPassed < 50)
+		if (ticksPassed < 10)
 		{
-			int delay = 50 - ticksPassed;
+			int delay = 10 - ticksPassed;
 			SDL_Delay(delay);
 		}
 	}
@@ -259,7 +262,14 @@ int RenderApplication::SetupFeatures(const CommandLineArguments* const arguments
 	//	arguments->QuailtySettings,
 	//	_threadpool,
 	//	_brdf,
-	//	_pathTracer);
+	//	_pathTracer
+
+		_frameRenderer = make_shared<CudaJankFrameRenderer>(
+		_scene,
+		_camera,
+		arguments->OutputSettings,
+		arguments->QuailtySettings
+		);
 
 	return CLI_ERRORCODE___OK;
 }

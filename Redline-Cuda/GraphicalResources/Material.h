@@ -3,6 +3,7 @@
 //#include "../Renderer/Raytracer/RayHitSurfaceDetails.h"
 #include "Bitmap2D.h"
 #include "MaterialEnums.h"
+#include "glm.h"
 
 namespace Redline
 {
@@ -13,11 +14,11 @@ namespace Redline
 	public:
 		Material();
 
-		mathfu::vec3 Albedo;
+		glm::vec3 Albedo;
 		std::shared_ptr<Bitmap2D> AlbedoTexture;
 		std::shared_ptr<Bitmap2D> NormalMap;
 
-		mathfu::vec3 Emission;
+		glm::vec3 Emission;
 		std::shared_ptr<Bitmap2D> EmissionMap;
 
 		//Possibly don't use this, as we acutaly simulate this by sampling rays

@@ -1,7 +1,8 @@
 #pragma once
 #include <tiny_gltf.h>
 #include <memory>
-#include <mathfu/glsl_mappings.h>
+#include <glm.h>
+
 namespace tinygltf
 {
 	class Model;
@@ -40,7 +41,7 @@ namespace Redline
 		void CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltfNode, std::shared_ptr<SceneObject> parent, std::shared_ptr<Scene>& scene);
 
 		static float TryGetMaterialFloat(tinygltf::ParameterMap& paramaters, const char* paramaterName, float defaultValue);
-		static mathfu::vec4 TryGetMaterialVector(tinygltf::ParameterMap& paramaters, const char* paramaterName, const mathfu::vec4& defaultValue);
+		static glm::vec4 TryGetMaterialVector(tinygltf::ParameterMap& paramaters, const char* paramaterName, const glm::vec4& defaultValue);
 		static std::string TryGetMaterialString(tinygltf::ParameterMap& paramaters, const char* paramaterName, const std::string& defaultValue);
 		static bool TryGetMaterialBool(tinygltf::ParameterMap& paramaters, const char* paramaterName, bool defaultValue);
 

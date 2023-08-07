@@ -1,9 +1,10 @@
 #include "CameraComponent.h"
 #include "../SceneObject.h"
 #include "../../Math/Math.h"
+#include <glm.h>
 
 using namespace Redline;
-using namespace mathfu;
+using namespace glm;
 
 CameraComponent::CameraComponent(SceneObject& parent)
 	:SceneObjectComponent(parent)
@@ -15,5 +16,5 @@ CameraComponent::CameraComponent(SceneObject& parent)
 mat4 CameraComponent::GetViewMatrix()
 {
 	auto worldMatrix = Object.Transform.GetWorldTransformMatrix();
-	return worldMatrix.Inverse();
+	return inverse(worldMatrix);
 }

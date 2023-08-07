@@ -36,17 +36,32 @@ namespace Redline
 		static void ShutdownCuda();
 
 		template<typename T>
-		static void* UploadVector(std::vector<T>& vector);
+		static T* UploadVector(std::vector<T>& vector);
+
+		template<typename T>
+		static T* UploadObject(T& object);
+
 	};
 
 	template<typename T>
-	inline void* CudaUtils::UploadVector(std::vector<T>& vector)
+	inline T* CudaUtils::UploadVector(std::vector<T>& vector)
 	{
 		size_t totalSize = sizeof(T) * vector.size();
-		void* result;
+		T* result;
 
 		cudaChecked(cudaMalloc(&result, totalSize));
 		cudaChecked(cudaMemcpy(result, vector.data(), totalSize, cudaMemcpyHostToDevice))
+		return result;
+	}
+
+	template<typename T>
+	inline T* CudaUtils::UploadObject(T& object)
+	{
+		size_t totalSize = sizeof(T);
+		T* result;
+
+		cudaChecked(cudaMalloc(&result, totalSize));
+		cudaChecked(cudaMemcpy(result, &object, totalSize, cudaMemcpyHostToDevice))
 		return result;
 	}
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "../SceneObjectComponent.h"
 #include "../SceneForwardDeclarations.h"
-#include <mathfu/glsl_mappings.h>
+#include <glm.h>
 
 namespace Redline
 {
@@ -13,7 +13,7 @@ namespace Redline
 
 		CameraComponent(SceneObject& parent);
 
-		mathfu::mat4 GetViewMatrix();
+		glm::mat4 GetViewMatrix();
 	private:
 	};
 }

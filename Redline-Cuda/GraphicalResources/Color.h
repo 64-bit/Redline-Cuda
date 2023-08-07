@@ -1,5 +1,6 @@
 #pragma once
 #include <mathfu/glsl_mappings.h>
+#include "cuda_runtime.h"
 
 namespace Redline
 {
@@ -15,7 +16,7 @@ namespace Redline
 		mathfu::vec4 ToVec4() const;
 	};
 
-	inline Color::Color()
+	__device__ __host__ inline Color::Color()
 	{
 		R = 0;
 		G = 0;

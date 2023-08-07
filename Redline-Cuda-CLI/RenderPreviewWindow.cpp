@@ -1,6 +1,7 @@
 #include "RenderPreviewWindow.h"
 #include "CommandLineArguments.h"
 #include "CLIErrorCodes.h"
+#include <GraphicalResources/Bitmap2D.h>
 
 using namespace Redline;
 
@@ -33,27 +34,27 @@ int RenderPreviewWindow::CreateWindow(const CommandLineArguments* const argument
 	return CLI_ERRORCODE___OK;
 }
 
-//void RenderPreviewWindow::UpdateWindowFromBitmap(std::shared_ptr<Bitmap2D> bitmapToDisplay)
-//{
-//	//copy frame result to window surface, flipping pixesl for display
-//	const auto pixelCount = bitmapToDisplay->Width * bitmapToDisplay->Height;
-//
-//	auto src = reinterpret_cast<unsigned char*>(bitmapToDisplay->Pixels);
-//	auto dst = static_cast<unsigned char*>(_sdlWindowSurface->pixels);
-//
-//	for (unsigned i = 0; i < pixelCount; i++)
-//	{
-//		dst[0] = src[2];
-//		dst[1] = src[1];
-//		dst[2] = src[0];
-//		dst[3] = src[3];
-//
-//		src += 4;
-//		dst += 4;
-//	}
-//
-//	SDL_UpdateWindowSurface(_sdlWindow);
-//}
+void RenderPreviewWindow::UpdateWindowFromBitmap(std::shared_ptr<Bitmap2D> bitmapToDisplay)
+{
+	//copy frame result to window surface, flipping pixesl for display
+	const auto pixelCount = bitmapToDisplay->Width * bitmapToDisplay->Height;
+
+	auto src = reinterpret_cast<unsigned char*>(bitmapToDisplay->Pixels);
+	auto dst = static_cast<unsigned char*>(_sdlWindowSurface->pixels);
+
+	for (unsigned i = 0; i < pixelCount; i++)
+	{
+		dst[0] = src[2];
+		dst[1] = src[1];
+		dst[2] = src[0];
+		dst[3] = src[3];
+
+		src += 4;
+		dst += 4;
+	}
+
+	SDL_UpdateWindowSurface(_sdlWindow);
+}
 
 bool RenderPreviewWindow::ShouldQuitThisFrame()
 {

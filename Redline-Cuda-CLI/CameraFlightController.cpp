@@ -1,18 +1,45 @@
 #include "CameraFlightController.h"
 #include <Scene/SceneObject.h>
-#include <Math/Math.h>
+#include <glm.h>
 
 #include "SDL.h"
 #undef main
 
 using namespace Redline;
 using namespace std;
-using namespace mathfu;
+using namespace glm;
 
 const float CAMERA_SPEED = 2.0f;
 const float MOUSE_SENSITIVITY = 500.0f;
 
 const float DELAY_BETWEEN_UPDATES = 0.05f;
+
+
+vec3 ExtractPitchYawRoll(const quat& rotation) 
+{
+	const auto x = rotation[1];
+	const auto y = rotation[2];
+	const auto z = rotation[3];
+	const auto w = rotation[0];
+
+	const auto x2 = x * x;
+	const auto y2 = y * y;
+	const auto z2 = z * z;
+
+
+	const auto roll = asinf(2.0f * x * y + 2.0f * z * w);
+
+	const auto yaw = atan2f(
+		2.0f * y * w - 2.0f * x * z,
+		1.0f - 2.0f * y2 - 2.0f * z2);
+
+	const auto pitch = atan2f(
+		2.0f * x * w - 2.0f * y * z,
+		1.0f - 2.0f * x2 - 2.0f * z2);
+
+	return vec3(pitch, yaw, roll);
+}
+
 
 CameraFlightController::CameraFlightController(RenderApplication & renderApplication,
 	std::shared_ptr<CameraComponent>& camera)
@@ -80,7 +107,7 @@ bool CameraFlightController::AttemptTranslations(float deltaT)
 		move += vec3(0.0f, 1.0f, 0.0f);
 	}
 
-	if(move.Length() > 0.0f) //If we have any sort of movement input, preform the movement and return true
+	if(length(move) > 0.0f) //If we have any sort of movement input, preform the movement and return true
 	{
 		move = move * deltaT * CAMERA_SPEED;
 
@@ -116,8 +143,8 @@ bool CameraFlightController::AttemptRotation(float deltaT)
 			_cameraPitchYawRoll[0] -= pitchMove;
 			_cameraPitchYawRoll[1] -= yawMove;
 
-			const auto newPitch = quat::FromEulerAngles(_cameraPitchYawRoll[0], 0.0f, 0.0f);
-			const auto newYaw = quat::FromEulerAngles(0.0f, _cameraPitchYawRoll[1], 0.0f);
+			const auto newPitch = quat(vec3(_cameraPitchYawRoll[0], 0.0f, 0.0f));
+			const auto newYaw = quat(vec3(0.0f, _cameraPitchYawRoll[1], 0.0f));
 
 			//Rotate camera
 			auto currentCameraRotation = _camera->Object.Transform.GetRotation();
