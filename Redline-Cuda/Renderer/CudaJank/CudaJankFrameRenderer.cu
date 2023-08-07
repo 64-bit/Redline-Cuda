@@ -24,7 +24,7 @@ struct PackedCameraData
 };
 
 
-__device__ __host__ bool RayTriangleIntersection(const Ray& localRay, const vec3& vertA, const vec3& vertB,
+__device__ __host__ inline bool RayTriangleIntersection(const Ray& localRay, const vec3& vertA, const vec3& vertB,
 	const vec3& vertC, float& outHitDistance)
 {
 	const float EPSILON = 0.0000001f;
@@ -49,14 +49,14 @@ __device__ __host__ bool RayTriangleIntersection(const Ray& localRay, const vec3
 	float f = 1.0f / a;
 	vec3 s = localRay.Origin - vertA;
 	float u = f * dot(s, h);
-	if (u < 0.0 || u > 1.0)
+	if (u < 0.0f || u > 1.0f)
 	{
 		return false;
 	}
 
 	vec3 q = cross(s, edge1);
 	float v = f * dot(localRay.Direction, q);
-	if (v < 0.0 || u + v > 1.0)
+	if (v < 0.0f || u + v > 1.0f)
 	{
 		return false;
 	}
@@ -120,14 +120,14 @@ __global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, Pac
 		float entry, exit;
 		if (mesh.Bounds.DoesRayIntersect(localRay, entry, exit))
 		{
-
+			vec3* meshVerts = ((vec3*)mesh.Verticies);
 			for (int tri = 0; tri < mesh.TriangleCount; tri++)
 			{
-				uint4 triangle = ((uint4*)mesh.Triangles)[tri];
+				uint4 triangle = mesh.Triangles[tri];
 
-				vec3 vertA = ((vec3*)mesh.Verticies)[triangle.x];
-				vec3 vertB = ((vec3*)mesh.Verticies)[triangle.y];
-				vec3 vertC = ((vec3*)mesh.Verticies)[triangle.z];
+				vec3 vertA = meshVerts[triangle.x];
+				vec3 vertB = meshVerts[triangle.y];
+				vec3 vertC = meshVerts[triangle.z];
 
 				float thisHitDistance;
 				bool didHit = RayTriangleIntersection(localRay, vertA, vertB, vertC, thisHitDistance);
@@ -198,7 +198,6 @@ CudaJankFrameRenderer::~CudaJankFrameRenderer()
 
 std::shared_ptr<Bitmap2D> CudaJankFrameRenderer::GetCurrentFrameState()
 {
-	cudaChecked(cudaDeviceSynchronize());
 	_cudaRenderTarget->CopyToBitmap2D(_renderTarget);
 	return _renderTarget;
 }

@@ -168,12 +168,15 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 		//}
 
 		//Wiat a minimum of 5 miliseconds between iterations of this loop
-		if (ticksPassed < 5)
-		{
-			int delay = 5 - ticksPassed;
-			SDL_Delay(delay);
-		}
+		//if (ticksPassed < 5)
+		//{
+		//	int delay = 5 - ticksPassed;
+		//	SDL_Delay(delay);
+		//}
 	}
+
+	_scene = nullptr;
+	_frameRenderer = nullptr;
 
 	//Quit CUDA
 	CudaUtils::ShutdownCuda();

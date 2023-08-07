@@ -14,12 +14,12 @@ namespace Redline
 		unsigned int Height;
 		void* Data;
 
-		__device__ __host__ unsigned int Index(uint2 position)
+		__device__ __host__ inline unsigned int Index(uint2 position)
 		{
 			return position.x + position.y * Width;
 		}
 
-		__device__ __host__ void SafeWriteColor(uint2 position, Color color)
+		__device__ __host__ inline void SafeWriteColor(uint2 position, Color color)
 		{
 			if (position.x >= Width || position.y >= Height) 
 			{

@@ -32,7 +32,7 @@ namespace Redline
 		BoundingBox Bounds;
 
 		void* Verticies;
-		void* Triangles;
+		uint4* Triangles;
 		void* Uv0;
 		void* Normals;
 		void* BiTangents;

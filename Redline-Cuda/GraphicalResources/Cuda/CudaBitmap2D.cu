@@ -54,6 +54,8 @@ void Redline::CudaBitmap2D::CopyToBitmap2D(std::shared_ptr<Bitmap2D> destination
 		throw std::exception();
 	}
 
+
+	cudaChecked(cudaDeviceSynchronize());
 	cudaChecked(cudaMemcpy(copyDest, DataPointer, _dataSize, cudaMemcpyDeviceToHost));
 }
 

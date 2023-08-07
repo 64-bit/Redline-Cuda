@@ -17,7 +17,7 @@ namespace Redline
 
 		BoundingBox();
 
-		__host__ __device__ bool DoesRayIntersect(const Ray& ray, float& outTNear, float& outTFar)
+		__host__ __device__ inline bool DoesRayIntersect(const Ray& ray, float& outTNear, float& outTFar)
 		{
 
 			float tNear = -FLT_MAX;

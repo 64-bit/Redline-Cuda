@@ -9,7 +9,7 @@ using namespace Redline;
 using namespace std;
 
 #ifdef NDEBUG
-const int SCALE_FACTOR = 4;
+const int SCALE_FACTOR = 1;
 const int SAMPLE_COUNT_FOR_BUILD = 8192;
 #else
 const int SCALE_FACTOR = 1;
