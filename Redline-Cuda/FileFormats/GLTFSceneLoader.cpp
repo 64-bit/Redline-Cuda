@@ -150,11 +150,11 @@ void GLTFSceneLoader::LoadMaterials(
 	}
 }
 
-void GLTFSceneLoader::LoadMeshes(tinygltf::Model& gltfFile, vector<shared_ptr<CudaMesh>>& meshesOut)
+void GLTFSceneLoader::LoadMeshes(tinygltf::Model& gltfFile, vector<shared_ptr<CudaMeshBuilder>>& meshesOut)
 {	
 	for(auto& mesh : gltfFile.meshes)
 	{
-		auto newMesh = std::make_shared<CudaMesh>(mesh.name, mesh, gltfFile);
+		auto newMesh = std::make_shared<CudaMeshBuilder>(mesh.name, mesh, gltfFile);
 		meshesOut.push_back(newMesh);
 	}
 }
@@ -166,6 +166,11 @@ void GLTFSceneLoader::FillScene(tinygltf::Model& gltfFile, std::shared_ptr<Scene
 	{
 		CreateNode(gltfFile,gltfFile.nodes[rootNode], nullptr, scene);
 	}
+
+	//Assign arrays of Meshes, Images and Materials
+	scene->Meshes = vector<std::shared_ptr<CudaMeshBuilder>>(Meshes);
+	scene->Materials = vector<std::shared_ptr<Material>>(Materials);
+	scene->Images = vector<std::shared_ptr<Bitmap2D>>(Images);
 }
 
 void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltfNode, shared_ptr<SceneObject> parent, shared_ptr<Scene>& scene)
@@ -217,10 +222,6 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 
 		DecomposeMatrix_GLM(tx, translation, rotation, scale);
 
-		//vec3 translation = tx.TranslationVector3D();
-		//quat rotation = quat::FromMatrix(tx.ToRotationMatrix(tx));
-		//quat rotation = quat::FromMatrix(tx.ToRotationMatrix(tx));
-
 		sceneObject->Transform.SetLocalPosition(translation);
 		sceneObject->Transform.SetLocalRotation(rotation);
 	}
@@ -230,7 +231,9 @@ void GLTFSceneLoader::CreateNode(tinygltf::Model& gltfFile, tinygltf::Node& gltf
 	{
 		//Append mesh
 		auto meshRenderer = sceneObject->AddComponent<CudaMeshRenderer>();
+
 		meshRenderer->Mesh = Meshes[gltfNode.mesh];//TODO:Handle default matieral
+		meshRenderer->MeshIndex = gltfNode.mesh;
 
 		for(auto& primitive : gltfFile.meshes[gltfNode.mesh].primitives)
 		{

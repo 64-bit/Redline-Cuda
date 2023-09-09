@@ -12,4 +12,6 @@ namespace Redline
 		mathfu::vec3 Tangent;
 
 	};
+
+
 }

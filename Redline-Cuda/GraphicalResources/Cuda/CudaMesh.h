@@ -21,9 +21,9 @@ namespace tinygltf
 
 namespace Redline
 {
-	class CudaMesh;
+	class CudaMeshBuilder;
 
-	class CudaMeshData
+	class CudaMesh
 	{
 	public:
 		unsigned int TriangleCount;
@@ -38,14 +38,14 @@ namespace Redline
 		void* BiTangents;
 		void* Tangents;
 
-		CudaMeshData();
+		CudaMesh();
 
-		CudaMeshData(CudaMesh& source);
+		CudaMesh(CudaMeshBuilder& source);
 
 		void Dispose();
 	};
 
-	class CudaMesh
+	class CudaMeshBuilder
 	{
 	private:
 
@@ -64,15 +64,15 @@ namespace Redline
 		std::vector<mathfu::vec3> BiTangents;
 		std::vector<mathfu::vec3> Tangents;
 
-		CudaMeshData _cudaMeshData;
+		CudaMesh _cudaMeshData;
 
 		BoundingBox Bounds;
 
 
 		unsigned int GetTriangleCount() const;
 
-		CudaMesh(const std::string& name, tinygltf::Mesh& mesh, tinygltf::Model& gltfFile);
-		~CudaMesh();
+		CudaMeshBuilder(const std::string& name, tinygltf::Mesh& mesh, tinygltf::Model& gltfFile);
+		~CudaMeshBuilder();
 
 	private:
 		void ComputeTangents();

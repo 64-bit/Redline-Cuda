@@ -2,19 +2,38 @@
 #include "../SingleFileLibs/lodepng.h"
 #include <iostream>
 #include "Color.h"
+#include "cuda_runtime.h"
+
+#include "Utilities/CudaUtils.h"
 
 using namespace Redline;
 using namespace mathfu;
 
+
+char* AllocateArray(size_t size) 
+{
+	char* result;
+	//cudaChecked(cudaMallocHost(&result, size));
+	result = new char[size];
+	return result;
+}
+
+void FreeArray(char* data) 
+{
+	//cudaChecked(cudaFreeHost(data));
+	delete[] data;
+}
+
 Bitmap2D::Bitmap2D(unsigned width, unsigned height) 
-: Width(width), Height(height), Pixels(new char[width*height*4])
+: Width(width), Height(height), Pixels(AllocateArray(width * height * sizeof(Color))) //Pixels(new char[width*height*4])
 {
 	MipmapChain.push_back(Pixels);
 }
 
 Bitmap2D::~Bitmap2D()
 {
-	delete[] Pixels;
+	//delete[] Pixels;
+	FreeArray(Pixels);
 }
 
 mathfu::vec3 Redline::Bitmap2D::SampleTexturePoint(const mathfu::vec2& uv)

@@ -3,6 +3,10 @@
 #include "CommandLineArguments.h"
 #include "CameraFlightController.h"
 #include <Utilities/CudaUtils.h>
+
+#include <stdio.h>
+
+
 //#include "Renderer/BRDF/CookTorrence/Functions/GGX_Distribution.h"
 //#include "Renderer/BRDF/CookTorrence/Functions/GGX_Geometry.h"
 //#include "Renderer/BRDF/CookTorrence/Functions/Schlick_Fresnel.h"
@@ -42,9 +46,15 @@ void RenderApplication::RestartRender()
 	//	_frameRenderer->StopRendering();
 	//	_frameResultPromis->Getvalue();
 	//}
-
-	_frameRenderer->ResetRenderer();
-	_frameRenderer->RenderFrame();
+	//try
+	//{
+		_frameRenderer->ResetRenderer();
+		_frameRenderer->RenderFrame();
+	//}
+	//catch(const std::exception& e)
+	//{
+	//	//cout << "Exception caught: " << e.what() << std::endl;
+	//}
 	//_frameResultPromis = _frameRenderer->RenderFrameAsync(_currentRenderMipLevel);
 }
 
@@ -96,6 +106,12 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 		const int ticksPassed = thisTick - lastTick;
 		lastTick = thisTick;
 		const float deltaT = static_cast<float>(ticksPassed) / 1000.0f;//Convert miliseconds to seconds
+		const float fps = 1.0f / deltaT;
+
+		char title[128]; // Adjust the buffer size as needed
+		sprintf(title, "FPS: %.5f", fps);
+
+		_previewWindow->SetTitle(title);
 
 		//Check if the user has pressed escape or click the X on the preview window
 		if(_previewWindow != nullptr)
@@ -107,7 +123,8 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 		//This lets us move the camera with percisoin, but only restart the render every so often
 		if (_flightController != nullptr)
 		{
-			const bool shouldUpdatePreview = _flightController->OnSDLUpdate(deltaT);
+			bool shouldUpdatePreview = _flightController->OnSDLUpdate(deltaT);
+			shouldUpdatePreview = true;
 			if(shouldUpdatePreview)
 			{
 				watch = Stopwatch();
@@ -168,9 +185,9 @@ void RenderApplication::RunWholeApplication(const CommandLineArguments* const ar
 		//}
 
 		//Wiat a minimum of 5 miliseconds between iterations of this loop
-		//if (ticksPassed < 5)
+		//if (ticksPassed < 10)
 		//{
-		//	int delay = 5 - ticksPassed;
+		//	int delay = 10 - ticksPassed;
 		//	SDL_Delay(delay);
 		//}
 	}

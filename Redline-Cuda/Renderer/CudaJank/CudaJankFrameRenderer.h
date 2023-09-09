@@ -7,18 +7,19 @@
 #include <GraphicalResources/Bitmap2D.h>
 #include <GraphicalResources/Cuda/CudaBitmap2D.h>
 #include <glm.h>
+#include <Scene/CompiledScene.h>
 
 namespace Redline
 {
+	class CompiledScene;
 
 	class JankScene
 	{
 	public:
 		unsigned int MeshCount;
-		CudaMeshData* Meshes;
+		CudaMesh* Meshes;
 		glm::mat4* Transforms;
 	};
-
 
 	class CudaJankFrameRenderer
 	{
@@ -37,6 +38,8 @@ namespace Redline
 		void* d_MeshArray;
 		glm::mat4x4* d_TransformsArray;
 
+		CompiledScene _compiledScene;
+
 	public:
 
 		CudaJankFrameRenderer(std::shared_ptr<Redline::Scene>& scene, std::shared_ptr<CameraComponent>& camera,
@@ -44,7 +47,7 @@ namespace Redline
 
 		~CudaJankFrameRenderer();
 
-		std::shared_ptr<Bitmap2D> GetCurrentFrameState();
+		std::shared_ptr<CudaBitmap2D> GetCurrentFrameState();
 
 		void ResetRenderer();
 

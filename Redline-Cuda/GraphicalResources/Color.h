@@ -13,6 +13,8 @@ namespace Redline
 
 		Color();
 		Color(const mathfu::vec4& floatColor);
+		Color(char r, char b, char g, char a);
+		Color RotateForSDLDisplay();
 		mathfu::vec4 ToVec4() const;
 	};
 
@@ -23,6 +25,15 @@ namespace Redline
 		B = 0;
 		A = 0;
 	}
+
+	__device__ __host__ inline Color::Color(char r, char b, char g, char a)
+	{
+		R = r;
+		G = g;
+		B = b;
+		A = a;
+	}
+
 	//For some reason is BRG right now
 	inline Color::Color(const mathfu::vec4& floatColor)
 	{
@@ -46,5 +57,10 @@ namespace Redline
 			(float)G / 255.0f,
 			(float)B / 255.0f,
 			(float)A / 255.0f);
+	}
+
+	__device__ __host__ inline Color Color::RotateForSDLDisplay()
+	{
+		return Color(B,G,R,A);
 	}
 }

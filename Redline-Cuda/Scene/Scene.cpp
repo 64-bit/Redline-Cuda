@@ -51,6 +51,42 @@ SceneObject* Scene::FindObjectByName(const string& name)
 	return result;
 }
 
+int Redline::Scene::GetIndexForImage(std::shared_ptr<Bitmap2D> image)
+{
+	for (int i = 0; i < Images.size(); i++) 
+	{
+		if (Images[i] == image) 
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Redline::Scene::GetIndexForMaterial(std::shared_ptr<Material> material)
+{
+	for (int i = 0; i < Images.size(); i++)
+	{
+		if (Materials[i] == material)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int Redline::Scene::GetIndexForMesh(std::shared_ptr<CudaMeshBuilder> mesh)
+{
+	for (int i = 0; i < Images.size(); i++)
+	{
+		if (Meshes[i] == mesh)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
 void Scene::ForEachSceneObject(std::function<bool(SceneObject*)>& callback, SceneObject* target)
 {
 	const bool decend = callback(target);

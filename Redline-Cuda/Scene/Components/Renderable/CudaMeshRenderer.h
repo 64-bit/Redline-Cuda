@@ -12,7 +12,11 @@ namespace Redline
 	public:
 		CudaMeshRenderer(SceneObject& owner);
 
-		std::shared_ptr<CudaMesh> Mesh;
+		std::shared_ptr<CudaMeshBuilder> Mesh;
+		int MeshIndex;
+
 		std::vector<std::shared_ptr<Material>> SurfaceMaterials;
+
+
 	};
 }

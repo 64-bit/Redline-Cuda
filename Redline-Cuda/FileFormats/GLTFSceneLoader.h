@@ -15,7 +15,7 @@ namespace Redline
 	class Material;
 	class TriangleMesh;
 	class SceneObject;
-	class CudaMesh;
+	class CudaMeshBuilder;
 
 	class GLTFSceneLoader
 	{
@@ -25,7 +25,7 @@ namespace Redline
 
 		std::vector<std::shared_ptr<Bitmap2D>> Images;
 		std::vector<std::shared_ptr<Material>> Materials;
-		std::vector<std::shared_ptr<CudaMesh>> Meshes;
+		std::vector<std::shared_ptr<CudaMeshBuilder>> Meshes;
 
 		static void LoadImages(tinygltf::Model& gltfFile, std::vector<std::shared_ptr<Bitmap2D>>& imagesOut);
 
@@ -34,7 +34,7 @@ namespace Redline
 			std::vector<std::shared_ptr<Material>>& materialsOut);
 
 		static void LoadMeshes(tinygltf::Model& gltfFile,
-			std::vector<std::shared_ptr<CudaMesh>>& meshesOut);
+			std::vector<std::shared_ptr<CudaMeshBuilder>>& meshesOut);
 
 		void FillScene(tinygltf::Model& gltfFile, std::shared_ptr<Scene>& scene);
 

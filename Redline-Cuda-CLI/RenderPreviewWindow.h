@@ -6,7 +6,7 @@
 namespace Redline
 {
 	class CommandLineArguments;
-	class Bitmap2D;
+	class CudaBitmap2D;
 
 	class RenderPreviewWindow
 	{
@@ -14,9 +14,11 @@ namespace Redline
 
 		RenderPreviewWindow();
 
+		void SetTitle(const char* title);
+
 		int CreateWindow(const CommandLineArguments* const arguments);
 
-		void UpdateWindowFromBitmap(std::shared_ptr<Bitmap2D> bitmapToDisplay);
+		void UpdateWindowFromBitmap(std::shared_ptr<CudaBitmap2D> bitmapToDisplay);
 
 		bool ShouldQuitThisFrame();
 

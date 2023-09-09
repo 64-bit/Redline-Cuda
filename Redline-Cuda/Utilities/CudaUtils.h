@@ -20,7 +20,7 @@ namespace Redline
 				{
 					if (throws)
 					{
-						throw std::exception();
+						//throw std::exception();
 					}
 				}
 			}

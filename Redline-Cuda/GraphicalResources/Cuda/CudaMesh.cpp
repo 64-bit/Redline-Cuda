@@ -7,16 +7,16 @@ using namespace std;
 using namespace Redline;
 using namespace mathfu;
 
-unsigned int Redline::CudaMesh::GetTriangleCount() const
+unsigned int Redline::CudaMeshBuilder::GetTriangleCount() const
 {
 	return Triangles.size();
 }
 
-Redline::CudaMesh::CudaMesh(const std::string& name, tinygltf::Mesh& mesh, tinygltf::Model& gltfFile)
+Redline::CudaMeshBuilder::CudaMeshBuilder(const std::string& name, tinygltf::Mesh& mesh, tinygltf::Model& gltfFile)
 {
 	Name = name;
 	BoundingRadius = 0.0f;
-	memset(&_cudaMeshData, 0, sizeof(CudaMeshData));
+	memset(&_cudaMeshData, 0, sizeof(CudaMesh));
 
 	int primitiveID = 0;
 	for (auto& primitive : mesh.primitives)
@@ -27,16 +27,16 @@ Redline::CudaMesh::CudaMesh(const std::string& name, tinygltf::Mesh& mesh, tinyg
 	ComputeTangents();
 	ComputeBounds();
 
-	_cudaMeshData = CudaMeshData(*this);
+	_cudaMeshData = CudaMesh(*this);
 	printf("Loaded mesh %s with %zu vertices and %u triangles\n", Name.c_str(), Vertices.size(), GetTriangleCount());
 }
 
-Redline::CudaMesh::~CudaMesh()
+Redline::CudaMeshBuilder::~CudaMeshBuilder()
 {
 	_cudaMeshData.Dispose();
 }
 
-void Redline::CudaMesh::ComputeTangentBitangent(uint4 triangle, vec3& tangent, vec3& biTangent)
+void Redline::CudaMeshBuilder::ComputeTangentBitangent(uint4 triangle, vec3& tangent, vec3& biTangent)
 {
 	vec3 positionA = Vertices[triangle.x];
 	vec3 positionB = Vertices[triangle.y];
@@ -78,7 +78,7 @@ void Redline::CudaMesh::ComputeTangentBitangent(uint4 triangle, vec3& tangent, v
 	Tangents[triangle.z] += tangent;
 }
 
-void Redline::CudaMesh::ComputeTangents()
+void Redline::CudaMeshBuilder::ComputeTangents()
 {
 	//Init binormal and tanget
 	for (int i = 0; i < Normals.size(); i++) 
@@ -110,7 +110,7 @@ void Redline::CudaMesh::ComputeTangents()
 	}
 }
 
-void Redline::CudaMesh::ComputeBounds()
+void Redline::CudaMeshBuilder::ComputeBounds()
 {
 	Bounds = BoundingBox();
 	for (vec3& vert : Vertices) 
@@ -119,7 +119,7 @@ void Redline::CudaMesh::ComputeBounds()
 	}
 }
 
-void Redline::CudaMesh::AppendGLTFPrimitive(tinygltf::Primitive& primitive, tinygltf::Model& gltfFile, int primitiveID)
+void Redline::CudaMeshBuilder::AppendGLTFPrimitive(tinygltf::Primitive& primitive, tinygltf::Model& gltfFile, int primitiveID)
 {
 	unsigned int vertexStartPosition = Vertices.size();
 
@@ -168,7 +168,7 @@ void Redline::CudaMesh::AppendGLTFPrimitive(tinygltf::Primitive& primitive, tiny
 	}
 }
 
-Redline::CudaMeshData::CudaMeshData()
+Redline::CudaMesh::CudaMesh()
 {
 	VertexCount = 0;
 	TriangleCount = 0;
@@ -181,7 +181,7 @@ Redline::CudaMeshData::CudaMeshData()
 	Tangents = nullptr;
 }
 
-Redline::CudaMeshData::CudaMeshData(CudaMesh& source)
+Redline::CudaMesh::CudaMesh(CudaMeshBuilder& source)
 {
 	VertexCount = source.Vertices.size();
 	TriangleCount = source.Triangles.size();
@@ -196,7 +196,7 @@ Redline::CudaMeshData::CudaMeshData(CudaMesh& source)
 	Bounds = source.Bounds;
 }
 
-void Redline::CudaMeshData::Dispose()
+void Redline::CudaMesh::Dispose()
 {
 	if (Triangles != nullptr) 
 	{
@@ -207,6 +207,6 @@ void Redline::CudaMeshData::Dispose()
 		cudaChecked(cudaFree(BiTangents));
 		cudaChecked(cudaFree(Tangents));
 
-		memset(this, 0, sizeof(CudaMeshData));
+		memset(this, 0, sizeof(CudaMesh));
 	}
 }

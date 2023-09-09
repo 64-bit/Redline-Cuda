@@ -9,9 +9,14 @@
 #include <functional>
 #include "../GraphicalResources/CubemapTexture.h"
 #include "SceneObject.h"
+#include <GraphicalResources/Cuda/CudaMesh.h>
 
 namespace Redline
 {
+
+	class Material;
+
+
 	/*
 	 *	A Scene contains a scenegraph of SceneObjects, Environmental settings and other associated metadata
 	 *
@@ -38,13 +43,22 @@ namespace Redline
 
 		void ForEachSceneObject(std::function<bool(SceneObject*)>& callback);
 
-
 		SceneObject* FindObjectByName(const std::string& name);
 
 		template<class T>
 		std::shared_ptr<T> FindComponentByType();
 
+
 		//Temp
+
+		std::vector<std::shared_ptr<Bitmap2D>> Images;
+		std::vector<std::shared_ptr<Material>> Materials;
+		std::vector<std::shared_ptr<CudaMeshBuilder>> Meshes;
+
+		int GetIndexForImage(std::shared_ptr<Bitmap2D> image);
+		int GetIndexForMaterial(std::shared_ptr<Material> material);
+		int GetIndexForMesh(std::shared_ptr<CudaMeshBuilder> mesh);
+
 
 		mathfu::vec3 BackgroundColor;
 		float EnvironmentPower;

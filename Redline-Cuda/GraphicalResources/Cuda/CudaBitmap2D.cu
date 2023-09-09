@@ -7,20 +7,48 @@
 
 using namespace Redline;
 
+
+
+__device__ __forceinline __forceinline__ inline uint2 computeThreadIndex2D() 
+{
+	uint2 result;
+	result.x = threadIdx.x + blockIdx.x * blockDim.x;
+	result.y = threadIdx.y + blockIdx.y * blockDim.y;
+	return result;
+}
+
+__global__ void rotatekernel(CudaBitmapData data) 
+{
+	uint2 i = computeThreadIndex2D();
+
+	if (i.x > data.Width || i.y > data.Height) 
+	{
+		return;
+	}
+
+	data[i] = data[i].RotateForSDLDisplay();
+}
+
+void Redline::CudaBitmap2D::RotateForDisplay()
+{
+	dim3 grid, block;
+	ComputeDispatchSize(grid, block);
+
+	rotatekernel << <grid, block >> > (Data);
+	cudaChecked(cudaGetLastError());
+}
+
 __global__ void clearKernel(CudaBitmapData data, Color clearColor)
 {
-	uint2 i;
-	i.x = threadIdx.x + blockIdx.x * blockDim.x;
-	i.y = threadIdx.y + blockIdx.y * blockDim.y;
+	uint2 i = computeThreadIndex2D();
+	if (i.x > data.Width || i.y > data.Height)
+	{
+		return;
+	}
 
-	//Color clearColor;
-	//clearColor.R = 255;
-	//clearColor.G = 0;
-	//clearColor.B = 0;
-	//clearColor.A = 255;
-
-	data.SafeWriteColor(i, clearColor);
+	data[i] = clearColor;
 }
+
 
 Redline::CudaBitmap2D::CudaBitmap2D(unsigned int width, unsigned int height)
 {
@@ -28,7 +56,7 @@ Redline::CudaBitmap2D::CudaBitmap2D(unsigned int width, unsigned int height)
 	cudaChecked(cudaMalloc(&DataPointer, _dataSize));
 
 	Data = CudaBitmapData();
-	Data.Data = DataPointer;
+	Data.Data = (Color*)DataPointer;
 	Data.Width = width;
 	Data.Height = height;
 }
@@ -55,20 +83,33 @@ void Redline::CudaBitmap2D::CopyToBitmap2D(std::shared_ptr<Bitmap2D> destination
 	}
 
 
-	cudaChecked(cudaDeviceSynchronize());
+	//cudaChecked(cudaDeviceSynchronize());
 	cudaChecked(cudaMemcpy(copyDest, DataPointer, _dataSize, cudaMemcpyDeviceToHost));
 }
 
 void Redline::CudaBitmap2D::CudaClear(Color color)
 {
-	dim3 block(8, 8);
+	dim3 block;// (8, 8);
 
-	int gridx = (Data.Width / 8) + ((Data.Width % 8) > 0 ? 1 : 0);
-	int gridy = (Data.Height / 8) + ((Data.Height % 8) > 0 ? 1 : 0);
+	//int gridx = (Data.Width / 8) + ((Data.Width % 8) > 0 ? 1 : 0);
+	//i/nt gridy = (Data.Height / 8) + ((Data.Height % 8) > 0 ? 1 : 0);
 
-	dim3 grid(gridx, gridy);
+	dim3 grid;// (gridx, gridy);
+
+	ComputeDispatchSize(grid, block);
 
 	clearKernel<<<grid, block >>>(Data, color);
 	cudaChecked(cudaGetLastError());
 
 }
+
+void Redline::CudaBitmap2D::ComputeDispatchSize(dim3& gridsOut, dim3& blocksOut)
+{
+	blocksOut = dim3(8, 8);
+
+	int gridx = (Data.Width / 8) + ((Data.Width % 8) > 0 ? 1 : 0);
+	int gridy = (Data.Height / 8) + ((Data.Height % 8) > 0 ? 1 : 0);
+
+	gridsOut = dim3(gridx, gridy);
+}
+
