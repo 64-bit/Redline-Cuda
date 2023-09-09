@@ -8,7 +8,7 @@
 #include <mathfu/glsl_mappings.h>
 #include <Math/Ray.h>
 #include <Scene/CompiledScene.h>
-
+#include <Renderer/CudaSurface.h>
 //#include <Math/cuda_helper_math.h>
 //#include <Math/cudaMat4.h>
 
@@ -75,7 +75,7 @@ __device__ __host__ inline bool RayTriangleIntersection(const Ray& localRay, con
 	}
 }
 
-__global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, PackedCameraData camera, CompiledScene compiledScene)
+__global__ void JankRenderFrame(CudaBitmapData frameBuffer, PackedCameraData camera, CompiledScene compiledScene)
 {
 	uint2 i;
 	i.x = threadIdx.x + blockIdx.x * blockDim.x;
@@ -109,10 +109,11 @@ __global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, Pac
 
 	float bestHitDistance;
 
-	for (int meshIndex = 0; meshIndex < scene.MeshCount; meshIndex++)
+	for (int surfaceIndex = 0; surfaceIndex < compiledScene.SurfaceCount; surfaceIndex++)
 	{
-		CudaMesh mesh = scene.Meshes[meshIndex];
-		mat4 worldToLocal = scene.Transforms[meshIndex];
+		CudaSurface surface = compiledScene.Surfaces[surfaceIndex];
+		mat4 worldToLocal = surface.Transform;
+		CudaMesh mesh = compiledScene.Meshes[surface.MeshId];
 
 		Ray localRay;
 		localRay.Origin = (worldToLocal * vec4(ray.Origin, 1.0f)).xyz;
@@ -134,15 +135,15 @@ __global__ void JankRenderFrame(CudaBitmapData frameBuffer, JankScene scene, Pac
 				bool didHit = RayTriangleIntersection(localRay, vertA, vertB, vertC, thisHitDistance);
 				if (didHit) 
 				{
-					if (meshIndex == 0)
+					if (surfaceIndex == 0)
 					{
 						color.R = 255;
 					}
-					if (meshIndex == 1)
+					if (surfaceIndex == 1)
 					{
 						color.G = 255;
 					}
-					if (meshIndex == 2)
+					if (surfaceIndex == 2)
 					{
 						color.B = 255;
 					}
@@ -172,7 +173,6 @@ CudaJankFrameRenderer::CudaJankFrameRenderer(
 	_cudaRenderTarget = std::make_shared<CudaBitmap2D>(frameOutputSettings.OutputWidth, frameOutputSettings.OutputHeight);
 
 	_compiledScene = CompiledScene(_scene);
-	UploadScene();
 }
 
 bool GetSurfacesFromSceneObject(SceneObject* sceneObject,
@@ -233,28 +233,8 @@ void CudaJankFrameRenderer::RenderFrame()
 
 	dim3 grid(gridx, gridy);
 
-	JankRenderFrame<<<grid, block >>>(_cudaRenderTarget->Data, _jankScene, cameraArgs, _compiledScene);
+	JankRenderFrame<<<grid, block >>>(_cudaRenderTarget->Data, cameraArgs, _compiledScene);
 	cudaChecked(cudaGetLastError());
 	cudaChecked(cudaDeviceSynchronize());
 	cudaChecked(cudaGetLastError());
-}
-
-void CudaJankFrameRenderer::UploadScene()
-{
-	std::vector<CudaMesh> _cudaMeshes;
-	std::vector<mat4> _transforms;
-
-	std::function<bool(Redline::SceneObject*)> boundCallback =
-		std::bind(&GetSurfacesFromSceneObject, std::placeholders::_1, &_cudaMeshes, &_transforms);
-
-	_scene->ForEachSceneObject(boundCallback);
-
-	d_MeshArray = CudaUtils::UploadVector(_cudaMeshes);
-	d_TransformsArray = CudaUtils::UploadVector(_transforms);
-
-
-	_jankScene = JankScene();
-	_jankScene.MeshCount = _cudaMeshes.size();
-	_jankScene.Meshes = (CudaMesh*)d_MeshArray;
-	_jankScene.Transforms = d_TransformsArray;
 }

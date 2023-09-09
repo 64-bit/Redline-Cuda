@@ -13,14 +13,6 @@ namespace Redline
 {
 	class CompiledScene;
 
-	class JankScene
-	{
-	public:
-		unsigned int MeshCount;
-		CudaMesh* Meshes;
-		glm::mat4* Transforms;
-	};
-
 	class CudaJankFrameRenderer
 	{
 	private:
@@ -31,12 +23,6 @@ namespace Redline
 		std::shared_ptr<CameraComponent> _camera;
 		FrameOutputSettings _frameOutputSettings;
 		FrameQuailtySettings _frameQuailtySettings;
-
-		void UploadScene();
-
-		JankScene _jankScene;
-		void* d_MeshArray;
-		glm::mat4x4* d_TransformsArray;
 
 		CompiledScene _compiledScene;
 
